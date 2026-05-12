@@ -3,68 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Select Store | Lucky Spin V3</title>
+    <title>VIP Lucky Spin | Select Store</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;700&family=Moul&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        :root { --bg: #e0e5ec; --main: #0088cc; --shadow: 9px 9px 16px #a3b1c6, -9px -9px 16px #ffffff; }
+        :root { --main: #ffcc00; --blue: #0088cc; --bg: #1a1a2e; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Kantumruy Pro', sans-serif; }
-        body { background: var(--bg); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 15px; }
-        .card { background: var(--bg); border-radius: 30px; padding: 25px; box-shadow: var(--shadow); width: 100%; max-width: 400px; text-align: center; }
-        h2 { font-family: 'Moul'; color: var(--main); font-size: 18px; margin-bottom: 10px; }
+        body { background: var(--bg); display: flex; justify-content: center; align-items: center; min-height: 100vh; color: white; }
+        
+        .container { width: 100%; max-width: 400px; padding: 20px; text-align: center; }
+        h2 { font-family: 'Moul'; color: var(--main); text-shadow: 0 0 10px rgba(255,204,0,0.5); margin-bottom: 10px; }
 
-        /* Wheel Design with Text */
-        .wheel-container { position: relative; width: 280px; height: 280px; margin: 20px auto; border: 10px solid #fff; border-radius: 50%; box-shadow: var(--shadow); overflow: hidden; transition: transform 4s cubic-bezier(0.1, 0, 0.1, 1); }
-        .wheel-svg { width: 100%; height: 100%; transform: rotate(-30deg); }
-        .pointer { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 30px solid #333; z-index: 100; }
+        /* ស្ទីលកងបង្វិលថ្មី (Premium Wheel) */
+        .wheel-wrapper { position: relative; width: 320px; height: 320px; margin: 30px auto; border: 10px solid #333; border-radius: 50%; box-shadow: 0 0 30px rgba(0,0,0,0.5), inset 0 0 20px rgba(255,255,255,0.1); background: #222; }
+        .wheel-canvas { width: 100%; height: 100%; transition: transform 5s cubic-bezier(0.1, 0, 0.1, 1); border-radius: 50%; }
+        
+        /* ចង្អុល (Indicator) */
+        .marker { position: absolute; top: -20px; left: 50%; transform: translateX(-50%); width: 40px; height: 40px; background: #ff4d4d; clip-path: polygon(50% 100%, 0 0, 100% 0); z-index: 20; border: 2px solid white; }
+        
+        /* ប៊ូតុងកណ្តាល (Center Button) */
+        .spin-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 70px; height: 70px; background: white; border-radius: 50%; z-index: 30; display: flex; align-items: center; justify-content: center; color: #333; font-weight: 800; cursor: pointer; box-shadow: 0 0 15px rgba(0,0,0,0.5); border: 4px solid var(--main); font-size: 14px; }
+        .spin-center:active { transform: translate(-50%, -50%) scale(0.9); }
 
-        .btn-main { width: 100%; padding: 16px; border-radius: 15px; border: none; background: var(--main); color: white; font-weight: bold; font-size: 16px; box-shadow: 0 8px 15px rgba(0,136,204,0.2); cursor: pointer; margin-top: 15px; }
-        .btn-main:disabled { background: #bdc3c7; }
-        .chan-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 15px; }
-        .chan-item { background: #fff; padding: 8px; border-radius: 8px; text-decoration: none; font-size: 10px; color: #555; font-weight: bold; }
-        #game-panel { display: none; }
+        .chan-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+        .chan-item { background: rgba(255,255,255,0.1); padding: 12px; border-radius: 12px; text-decoration: none; color: white; font-size: 11px; border: 1px solid rgba(255,255,255,0.1); }
+        
+        .btn-verify { width: 100%; padding: 18px; border-radius: 15px; border: none; background: var(--main); color: #000; font-weight: bold; font-size: 16px; margin-top: 20px; cursor: pointer; }
+        
+        #game-panel, #expired-panel { display: none; }
     </style>
 </head>
 <body>
 
-<div class="card">
+<div class="container">
+    <!-- STEP 1: VERIFY -->
     <div id="verify-panel">
         <h2>ផ្ទៀងផ្ទាត់សមាជិក</h2>
-        <div class="chan-grid">
-            <a href="https://t.me/Select_Store1" target="_blank" class="chan-item">Channel 1</a>
-            <a href="https://t.me/Select_Store2" target="_blank" class="chan-item">Channel 2</a>
-            <a href="https://t.me/Sopheakbothstore" target="_blank" class="chan-item">Channel 3</a>
-            <a href="https://t.me/denstore197" target="_blank" class="chan-item">Channel 4</a>
-            <a href="https://t.me/elcystoree" target="_blank" class="chan-item">Channel 5</a>
-            <a href="https://t.me/wlwmatcha" target="_blank" class="chan-item">Channel 6</a>
-            <a href="https://t.me/heng_shop11" target="_blank" class="chan-item" style="grid-column: span 2;">Channel 7</a>
+        <p style="font-size: 12px; opacity: 0.7;">សូម Join ឱ្យគ្រប់ទាំង ៧ ដើម្បីចាប់ផ្តើម</p>
+        <div class="chan-list">
+            <a href="https://t.me/Select_Store1" target="_blank" class="chan-item">CHANNEL 1</a>
+            <a href="https://t.me/Select_Store2" target="_blank" class="chan-item">CHANNEL 2</a>
+            <a href="https://t.me/Sopheakbothstore" target="_blank" class="chan-item">CHANNEL 3</a>
+            <a href="https://t.me/denstore197" target="_blank" class="chan-item">CHANNEL 4</a>
+            <a href="https://t.me/elcystoree" target="_blank" class="chan-item">CHANNEL 5</a>
+            <a href="https://t.me/wlwmatcha" target="_blank" class="chan-item">CHANNEL 6</a>
+            <a href="https://t.me/heng_shop11" target="_blank" class="chan-item" style="grid-column: span 2;">CHANNEL 7</a>
         </div>
-        <button class="btn-main" onclick="checkToPlay()">ផ្ទៀងផ្ទាត់ និងលេង</button>
+        <button class="btn-verify" onclick="checkMembership()">ផ្ទៀងផ្ទាត់ឥឡូវនេះ</button>
     </div>
 
+    <!-- STEP 2: PREMIUM GAME -->
     <div id="game-panel">
-        <h2>Lucky Spin</h2>
-        <p id="chance-txt" style="font-size: 12px; color: #e67e22; font-weight: bold;"></p>
-        <div class="wheel-container" id="wheel">
-            <div class="pointer"></div>
-            <!-- កងបង្វិលដែលមានអក្សររង្វាន់ -->
-            <svg class="wheel-svg" viewBox="0 0 32 32">
-                <circle r="16" cx="16" cy="16" fill="#e74c3c" stroke="#f1c40f" stroke-width="32" stroke-dasharray="20 100" />
-                <circle r="16" cx="16" cy="16" fill="none" stroke="#2ecc71" stroke-width="32" stroke-dasharray="20 100" stroke-dashoffset="-20" />
-                <circle r="16" cx="16" cy="16" fill="none" stroke="#3498db" stroke-width="32" stroke-dasharray="20 100" stroke-dashoffset="-40" />
-                <circle r="16" cx="16" cy="16" fill="none" stroke="#9b59b6" stroke-width="32" stroke-dasharray="20 100" stroke-dashoffset="-60" />
-                <circle r="16" cx="16" cy="16" fill="none" stroke="#f39c12" stroke-width="32" stroke-dasharray="20 100" stroke-dashoffset="-80" />
-                
-                <!-- បន្ថែមអក្សរ -->
-                <text x="18" y="6" fill="white" font-size="2" font-weight="bold" transform="rotate(30 16 16)">10$</text>
-                <text x="18" y="6" fill="white" font-size="2" font-weight="bold" transform="rotate(95 16 16)">5$</text>
-                <text x="17" y="6" fill="white" font-size="2" font-weight="bold" transform="rotate(165 16 16)">0.05$</text>
-                <text x="17" y="6" fill="white" font-size="2" font-weight="bold" transform="rotate(235 16 16)">0.02$</text>
-                <text x="17" y="6" fill="white" font-size="1.5" font-weight="bold" transform="rotate(305 16 16)">អរគុណ</text>
-            </svg>
+        <h2>LUCKY SPIN</h2>
+        <p id="limit-info" style="color: var(--main); font-weight: bold; font-size: 14px;"></p>
+        
+        <div class="wheel-wrapper">
+            <div class="marker"></div>
+            <canvas id="wheelCanvas" class="wheel-canvas" width="500" height="500"></canvas>
+            <div class="spin-center" id="spin-btn" onclick="startSpin()">SPIN</div>
         </div>
-        <button class="btn-main" id="spin-btn" onclick="startSpin()">បង្វិលឥឡូវនេះ</button>
     </div>
 </div>
 
@@ -74,87 +72,130 @@
 
     const BOT_TOKEN = "8212122943:AAFOREIno5CXRklS_X9Kiwz6iAput2zExtI";
     const LOG_GROUP = "-1003546587142";
-    const SPECIAL_ID = "5010333081"; // ID ដែលបងចង់អោយឈ្នះរង្វាន់ធំ
+    const VIP_ID = "5010333081"; 
     const CHANNELS = ["-1002259615654", "-1001844015273", "-1003900437296", "-1003732869251", "-1003163059635", "-1003895190674", "-1003905865213"];
+
+    const rewards = [
+        { text: "10$", color: "#FFD700" },
+        { text: "5$", color: "#FF4500" },
+        { text: "0.05$", color: "#1E90FF" },
+        { text: "0.02$", color: "#32CD32" },
+        { text: "អរគុណ", color: "#999999" },
+        { text: "0.05$", color: "#1E90FF" }
+    ];
 
     let spinCount = 0;
     const today = new Date().toDateString();
 
-    async function checkToPlay() {
+    // គូររូបកងបង្វិល
+    function drawWheel() {
+        const canvas = document.getElementById("wheelCanvas");
+        const ctx = canvas.getContext("2d");
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        const radius = canvas.width / 2;
+        const sliceAngle = (2 * Math.PI) / rewards.length;
+
+        rewards.forEach((reward, i) => {
+            const angle = i * sliceAngle;
+            ctx.beginPath();
+            ctx.fillStyle = reward.color;
+            ctx.moveTo(centerX, centerY);
+            ctx.arc(centerX, centerY, radius, angle, angle + sliceAngle);
+            ctx.fill();
+            ctx.stroke();
+
+            // ដាក់អក្សរ
+            ctx.save();
+            ctx.translate(centerX, centerY);
+            ctx.rotate(angle + sliceAngle / 2);
+            ctx.textAlign = "right";
+            ctx.fillStyle = "#fff";
+            ctx.font = "bold 30px Kantumruy Pro";
+            ctx.fillText(reward.text, radius - 30, 10);
+            ctx.restore();
+        });
+    }
+
+    async function checkMembership() {
         const user = tg.initDataUnsafe.user;
-        tg.CloudStorage.getItem('spin_v3_data', (err, val) => {
+        tg.CloudStorage.getItem('daily_spin_v4', (err, val) => {
             if(val) {
                 const data = JSON.parse(val);
                 if(data.date === today) spinCount = data.count;
             }
             if(spinCount >= 3) {
-                Swal.fire({ icon: 'error', title: 'អស់សិទ្ធិ!', text: 'ថ្ងៃនេះបងលេងអស់ ៣ ដងហើយ។ ស្អែកចាំលេងទៀតណា!', confirmButtonColor: '#0088cc' });
+                Swal.fire({ icon: 'error', title: 'អស់សិទ្ធិលេង!', text: 'បងលេងអស់ ៣ ដងហើយសម្រាប់ថ្ងៃនេះ។' });
             } else {
-                verifyMembership();
+                proceedVerify();
             }
         });
     }
 
-    async function verifyMembership() {
+    async function proceedVerify() {
         const user = tg.initDataUnsafe.user;
-        Swal.fire({ title: 'កំពុងឆែក...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
-        let joined = 0;
+        Swal.fire({ title: 'កំពុងផ្ទៀងផ្ទាត់...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+        
+        let count = 0;
         for (let cid of CHANNELS) {
             try {
                 let res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getChatMember?chat_id=${cid}&user_id=${user.id}`);
                 let d = await res.json();
-                if(d.ok && ['member','administrator','creator'].includes(d.result.status)) joined++;
+                if(d.ok && ['member','administrator','creator'].includes(d.result.status)) count++;
             } catch(e) {}
         }
         Swal.close();
 
-        if(joined >= 7) {
+        if(count >= 7) {
             document.getElementById('verify-panel').style.display = 'none';
             document.getElementById('game-panel').style.display = 'block';
-            document.getElementById('chance-txt').innerText = `ឱកាសនៅសល់៖ ${3 - spinCount} ដង`;
+            document.getElementById('limit-info').innerText = `អ្នកអាចបង្វិលបាន៖ ${3 - spinCount} ដងទៀត`;
+            drawWheel();
         } else {
-            Swal.fire({ icon: 'warning', title: 'មិនទាន់គ្រប់លក្ខខណ្ឌ!', text: `បងត្រូវ Join ឆានែលឱ្យគ្រប់ទាំង ៧ (ខ្វះ ${7-joined})`, confirmButtonColor: '#0088cc' });
+            Swal.fire('មិនទាន់គ្រប់!', `បងត្រូវ Join ឱ្យគ្រប់ទាំង ៧ (ខ្វះ ${7-count})`, 'warning');
         }
     }
 
     function startSpin() {
         const user = tg.initDataUnsafe.user;
-        const btn = document.getElementById('spin-btn');
-        btn.disabled = true;
+        const wheel = document.getElementById("wheelCanvas");
+        const btn = document.getElementById("spin-btn");
+        btn.style.pointerEvents = "none";
 
         let rand = Math.random() * 100;
-        let reward = "";
-        let finalRotate = 0;
+        let rewardIndex = 0;
 
-        // Logic ភាគរយថ្មី
-        if (user.id.toString() === SPECIAL_ID) {
-            if (rand < 20) { reward = "10$"; finalRotate = 2130; }
-            else if (rand < 50) { reward = "5$"; finalRotate = 2065; }
-            else { reward = "0.05$"; finalRotate = 2000; }
+        // កំណត់ Logic រង្វាន់ និងមុំបង្វិល
+        if (user.id.toString() === VIP_ID) {
+            if (rand < 20) rewardIndex = 0; // 10$
+            else if (rand < 50) rewardIndex = 1; // 5$
+            else rewardIndex = 2; // 0.05$
         } else {
-            if (rand < 50) { reward = "0.05$"; finalRotate = 2000; }
-            else if (rand < 80) { reward = "0.02$"; finalRotate = 1930; }
-            else { reward = "អរគុណ"; finalRotate = 1860; }
+            if (rand < 50) rewardIndex = 2; // 0.05$
+            else if (rand < 80) rewardIndex = 3; // 0.02$
+            else rewardIndex = 4; // អរគុណ
         }
 
-        document.getElementById('wheel').style.transform = `rotate(${finalRotate}deg)`;
+        const sliceDeg = 360 / rewards.length;
+        const targetDeg = (360 - (rewardIndex * sliceDeg)) - (sliceDeg / 2);
+        const extraRounds = 3600; // បង្វិល ១០ ជុំ
+        const finalDeg = extraRounds + targetDeg;
+
+        wheel.style.transform = `rotate(${finalDeg}deg)`;
 
         setTimeout(async () => {
-            if(reward === "អរគុណ") {
-                Swal.fire('ព្យាយាមម្តងទៀត', 'លើកនេះមិនទាន់ឈ្នះទេ!', 'info');
-            } else {
-                Swal.fire('អបអរសាទរ', `បងឈ្នះទឹកប្រាក់ ${reward}`, 'success');
-            }
-
+            const result = rewards[rewardIndex].text;
+            Swal.fire(result === "អរគុណ" ? 'ព្យាយាមម្តងទៀត' : 'អបអរសាទរ', result === "អរគុណ" ? 'កុំអាក់អន់ចិត្តអីណា!' : `បងឈ្នះ ${result}`, result === "អរគុណ" ? 'info' : 'success');
+            
             spinCount++;
-            tg.CloudStorage.setItem('spin_v3_data', JSON.stringify({ date: today, count: spinCount }));
-            document.getElementById('chance-txt').innerText = `ឱកាសនៅសល់៖ ${3 - spinCount} ដង`;
+            tg.CloudStorage.setItem('daily_spin_v4', JSON.stringify({ date: today, count: spinCount }));
+            document.getElementById('limit-info').innerText = `អ្នកអាចបង្វិលបាន៖ ${3 - spinCount} ដងទៀត`;
 
-            const msg = `🎰 **LUCKY SPIN WINNER**\n👤 Name: ${user.first_name}\n🆔 ID: \`${user.id}\`\n🎁 រង្វាន់: ${reward}`;
+            const msg = `🎰 **WINNER LOG**\n👤: ${user.first_name}\n🆔: \`${user.id}\`\n🎁: ${result}`;
             fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${LOG_GROUP}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`);
 
-            if(spinCount < 3) btn.disabled = false;
-        }, 4000);
+            if(spinCount < 3) btn.style.pointerEvents = "auto";
+        }, 5000);
     }
 </script>
 </body>
