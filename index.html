@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Store | Spin & Win</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;700&family=Moul&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root {
+            --bg: #e0e5ec;
+            --main: #0088cc;
+            --shadow: 9px 9px 16px #a3b1c6, -9px -9px 16px #ffffff;
+            --inner: inset 6px 6px 12px #a3b1c6, inset -6px -6px 12px #ffffff;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Kantumruy Pro', sans-serif; }
+        body { background: var(--bg); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 15px; }
+        
+        .card { background: var(--bg); border-radius: 30px; padding: 30px 20px; box-shadow: var(--shadow); width: 100%; max-width: 400px; text-align: center; }
+        h2 { font-family: 'Moul'; color: var(--main); font-size: 18px; margin-bottom: 10px; }
+        
+        /* កងបង្វិល */
+        .wheel-box { position: relative; width: 260px; height: 260px; margin: 20px auto; border: 8px solid #fff; border-radius: 50%; box-shadow: var(--shadow); transition: transform 4s cubic-bezier(0.1, 0, 0.1, 1); }
+        .wheel-design { width: 100%; height: 100%; background: conic-gradient(#e74c3c 0deg 60deg, #f1c40f 60deg 120deg, #2ecc71 120deg 180deg, #3498db 180deg 240deg, #9b59b6 240deg 300deg, #e67e22 300deg 360deg); border-radius: 50%; }
+        .pointer { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 30px solid #333; z-index: 10; }
+
+        .btn-main { width: 100%; padding: 18px; border-radius: 20px; border: none; background: var(--main); color: white; font-weight: bold; font-size: 16px; box-shadow: 0 8px 15px rgba(0,136,204,0.3); cursor: pointer; transition: 0.3s; margin-top: 15px; }
+        .btn-main:active { transform: scale(0.95); }
+        .btn-main:disabled { background: #bdc3c7; box-shadow: none; }
+
+        .chan-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .chan-btn { background: var(--bg); box-shadow: var(--shadow); padding: 10px; border-radius: 12px; text-decoration: none; color: #555; font-size: 11px; font-weight: 700; }
+        
+        #game-ui, #expired-ui { display: none; }
+        
+        /* SweetAlert Custom Style */
+        .swal2-popup { border-radius: 25px !important; background: var(--bg) !important; font-family: 'Kantumruy Pro' !important; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <!-- STEP 1: VERIFY -->
+    <div id="verify-ui">
+        <i class="fas fa-user-shield" style="font-size: 50px; color: var(--main); margin-bottom: 15px;"></i>
+        <h2>ផ្ទៀងផ្ទាត់លក្ខខណ្ឌ</h2>
+        <p style="font-size: 12px; margin-bottom: 20px; opacity: 0.7;">សូមចូលរួមឆានែលទាំង ៧ ដើម្បីបើកសិទ្ធិលេង</p>
+        <div class="chan-grid">
+            <a href="https://t.me/Select_Store1" target="_blank" class="chan-btn">Channel 1</a>
+            <a href="https://t.me/Select_Store2" target="_blank" class="chan-btn">Channel 2</a>
+            <a href="https://t.me/Sopheakbothstore" target="_blank" class="chan-btn">Channel 3</a>
+            <a href="https://t.me/denstore197" target="_blank" class="chan-btn">Channel 4</a>
+            <a href="https://t.me/elcystoree" target="_blank" class="chan-btn">Channel 5</a>
+            <a href="https://t.me/wlwmatcha" target="_blank" class="chan-btn">Channel 6</a>
+            <a href="https://t.me/heng_shop11" target="_blank" class="chan-btn" style="grid-column: span 2;">Channel 7</a>
+        </div>
+        <button class="btn-main" onclick="checkToPlay()">ផ្ទៀងផ្ទាត់ និងចូលលេង</button>
+    </div>
+
+    <!-- STEP 2: GAME -->
+    <div id="game-ui">
+        <h2>Lucky Spin</h2>
+        <p id="chance-text" style="font-size: 13px; color: #e67e22; font-weight: bold;"></p>
+        <div class="wheel-box" id="wheel">
+            <div class="pointer"></div>
+            <div class="wheel-design"></div>
+        </div>
+        <button class="btn-main" id="spin-btn" onclick="handleSpin()">បង្វិលយកលុយ</button>
+    </div>
+
+    <!-- EXPIRED -->
+    <div id="expired-ui">
+        <i class="fas fa-clock" style="font-size: 60px; color: #e74c3c; margin-bottom: 15px;"></i>
+        <h2 style="color: #e74c3c;">កម្មវិធីបានបញ្ចប់!</h2>
+        <p style="font-size: 13px; opacity: 0.8;">សូមអភ័យទោស កម្មវិធីនេះបានផុតកំណត់ហើយ។</p>
+        <button class="btn-main" onclick="tg.close()">ចាកចេញ</button>
+    </div>
+</div>
+
+<script>
+    const tg = window.Telegram.WebApp;
+    tg.expand();
+
+    const BOT_TOKEN = "8212122943:AAFOREIno5CXRklS_X9Kiwz6iAput2zExtI";
+    const LOG_GROUP = "-1003546587142";
+    const SPECIAL_USER = "1003905865213"; // ID មនុស្សដែលបងចង់អោយឈ្នះ 10$ 5$
+    const CHANNELS = ["-1002259615654", "-1001844015273", "-1003900437296", "-1003732869251", "-1003163059635", "-1003895190674", "-1003905865213"];
+
+    // កំណត់រយៈពេល ១០ ថ្ងៃ
+    const END_DATE = new Date("2026-05-22T23:59:59");
+    const today = new Date().toDateString();
+    let spinCount = 0;
+
+    // ឆែក Expired តាំងពីបើក
+    if (new Date() > END_DATE) {
+        document.getElementById('verify-ui').style.display = 'none';
+        document.getElementById('expired-ui').style.display = 'block';
+    }
+
+    async function checkToPlay() {
+        const user = tg.initDataUnsafe.user;
+        if(!user) return;
+
+        // ឆែកចំនួនដងដែលលេងរួច
+        tg.CloudStorage.getItem('user_daily_spins', (err, val) => {
+            if(val) {
+                const data = JSON.parse(val);
+                if(data.date === today) spinCount = data.count;
+            }
+
+            if (spinCount >= 3) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'អស់សិទ្ធិហើយ!',
+                    text: 'បងអាចលេងបានតែ ៣ ដងប៉ុណ្ណោះក្នុងមួយថ្ងៃ។ សូមត្រឡប់មកវិញនៅថ្ងៃស្អែក!',
+                    confirmButtonColor: '#0088cc'
+                });
+            } else {
+                verifyMembership();
+            }
+        });
+    }
+
+    async function verifyMembership() {
+        const user = tg.initDataUnsafe.user;
+        Swal.fire({ title: 'កំពុងពិនិត្យ...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+        let joined = 0;
+        for (let cid of CHANNELS) {
+            try {
+                let res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getChatMember?chat_id=${cid}&user_id=${user.id}`);
+                let d = await res.json();
+                if(d.ok && ['member','administrator','creator'].includes(d.result.status)) joined++;
+            } catch(e) {}
+        }
+        Swal.close();
+
+        if (joined >= 7) {
+            document.getElementById('verify-ui').style.display = 'none';
+            document.getElementById('game-ui').style.display = 'block';
+            document.getElementById('chance-text').innerText = `ឱកាសនៅសល់៖ ${3 - spinCount} ដង`;
+        } else {
+            // សារលោតប្រាប់យ៉ាងស្អាតបើមិនទាន់ Join គ្រប់
+            Swal.fire({
+                icon: 'warning',
+                title: 'មិនទាន់គ្រប់លក្ខខណ្ឌ!',
+                html: `បងត្រូវ Join ឆានែលឱ្យគ្រប់ទាំង ៧ ជាមុនសិន។<br><b style="color:#e74c3c;">បងខ្វះចំនួន ${7 - joined} ឆានែលទៀត!</b>`,
+                confirmButtonText: 'យល់ព្រម',
+                confirmButtonColor: '#0088cc'
+            });
+        }
+    }
+
+    function handleSpin() {
+        const user = tg.initDataUnsafe.user;
+        const btn = document.getElementById('spin-btn');
+        btn.disabled = true;
+
+        let rand = Math.random() * 100;
+        let reward = "";
+
+        // Logic រង្វាន់
+        if (user.id.toString() === SPECIAL_USER) {
+            if (rand < 10) reward = "10$";
+            else if (rand < 30) reward = "5$";
+            else reward = "0.05$";
+        } else {
+            if (rand < 60) reward = "0.05$";
+            else if (rand < 85) reward = "0.02$";
+            else reward = "អរគុណ";
+        }
+
+        const rotate = Math.floor(Math.random() * 360) + 1800; 
+        document.getElementById('wheel').style.transform = `rotate(${rotate}deg)`;
+
+        setTimeout(async () => {
+            // បង្ហាញលទ្ធផលដោយប្រើ SweetAlert
+            if (reward === "អរគុណ") {
+                Swal.fire({ icon: 'info', title: 'សោកស្តាយផង!', text: 'បងមិនបានឈ្នះរង្វាន់ទេលើកនេះ។ ព្យាយាមម្តងទៀតណា!', confirmButtonColor: '#0088cc' });
+            } else {
+                Swal.fire({ icon: 'success', title: 'អបអរសាទរ!', html: `បងបានឈ្នះទឹកប្រាក់ចំនួន <b style="font-size:24px; color:#2ecc71;">${reward}</b>`, confirmButtonColor: '#2ecc71' });
+            }
+
+            spinCount++;
+            tg.CloudStorage.setItem('user_daily_spins', JSON.stringify({ date: today, count: spinCount }));
+            document.getElementById('chance-text').innerText = `ឱកាសនៅសល់៖ ${3 - spinCount} ដង`;
+
+            // បាញ់ Log
+            const msg = `🎰 **LUCKY SPIN WIN**\n👤 ឈ្មោះ: ${user.first_name}\n🆔 ID: \`${user.id}\`\n🎁 រង្វាន់: ${reward}`;
+            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${LOG_GROUP}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`);
+
+            if(spinCount < 3) btn.disabled = false;
+        }, 4000);
+    }
+</script>
+</body>
+</html>
+
