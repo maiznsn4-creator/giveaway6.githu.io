@@ -3,63 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premium Lucky Spin | 2026</title>
+    <title>Neumorphic Lucky Spin | 2026</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;700&family=Moul&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;600;700&family=Moul&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        :root { --main: #ffcc00; --bg: #0f0f1b; --glass: rgba(255, 255, 255, 0.1); }
+        :root {
+            --bg-color: #e0e5ec;
+            --text-color: #31344b;
+            --main-accent: #6c5ce7;
+            --shadow-raised: 8px 8px 16px #a3b1c6, -8px -8px 16px #ffffff;
+            --shadow-pressed: inset 6px 6px 12px #a3b1c6, inset -6px -6px 12px #ffffff;
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Kantumruy Pro', sans-serif; }
-        body { background: var(--bg); color: white; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow: hidden; }
+        body { background-color: var(--bg-color); color: var(--text-color); display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow: hidden; padding: 20px; }
         
-        .container { width: 100%; max-width: 420px; text-align: center; padding: 20px; }
-        h2 { font-family: 'Moul'; color: var(--main); margin-bottom: 5px; text-shadow: 0 0 15px rgba(255,204,0,0.6); }
+        .container { width: 100%; max-width: 420px; }
+        .card { background-color: var(--bg-color); border-radius: 40px; padding: 30px; box-shadow: var(--shadow-raised); text-align: center; }
 
-        /* Wheel Container */
-        .wheel-box { position: relative; width: 340px; height: 340px; margin: 30px auto; border-radius: 50%; border: 12px solid #222; box-shadow: 0 0 50px rgba(0,0,0,0.8), 0 0 20px var(--main); background: #222; }
-        
-        /* អាការៈចង្អុល (The Needle) */
-        .needle { position: absolute; top: -25px; left: 50%; transform: translateX(-50%); width: 45px; height: 50px; background: #ff3e3e; clip-path: polygon(50% 100%, 0 0, 100% 0); z-index: 100; border: 2px solid white; filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5)); }
+        h2 { font-family: 'Moul'; font-size: 20px; color: var(--main-accent); margin-bottom: 20px; }
 
-        canvas { width: 100%; height: 100%; border-radius: 50%; transition: transform 6s cubic-bezier(0.2, 0, 0.1, 1); }
+        /* Wheel Design */
+        .wheel-container {
+            position: relative; width: 280px; height: 280px; margin: 0 auto 30px;
+            padding: 15px; border-radius: 50%; box-shadow: var(--shadow-raised);
+            background: var(--bg-color);
+        }
 
-        /* ប៊ូតុងចុចកណ្តាល */
-        .spin-trigger { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80px; height: 80px; background: radial-gradient(circle, #fff, #ccc); border-radius: 50%; z-index: 110; cursor: pointer; display: flex; align-items: center; justify-content: center; border: 5px solid #333; box-shadow: 0 5px 15px rgba(0,0,0,0.5); font-weight: 900; color: #111; font-size: 16px; }
-        .spin-trigger:active { transform: translate(-50%, -50%) scale(0.9); }
+        .needle {
+            position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+            width: 30px; height: 40px; background: #ff4757; 
+            clip-path: polygon(50% 100%, 0 0, 100% 0); z-index: 10;
+            filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.2));
+        }
 
-        .btn-verify { width: 100%; padding: 20px; border-radius: 20px; border: none; background: linear-gradient(45deg, var(--main), #ffa500); color: #000; font-weight: bold; font-size: 18px; margin-top: 20px; cursor: pointer; box-shadow: 0 10px 20px rgba(255,165,0,0.3); }
-        .chan-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
-        .chan-item { background: var(--glass); padding: 15px; border-radius: 15px; text-decoration: none; color: #fff; font-size: 11px; border: 1px solid rgba(255,255,255,0.1); transition: 0.3s; }
-        .chan-item:hover { background: rgba(255,255,255,0.2); }
+        .wheel-outer {
+            width: 100%; height: 100%; border-radius: 50%;
+            overflow: hidden; position: relative;
+            box-shadow: var(--shadow-pressed);
+            transition: transform 6s cubic-bezier(0.15, 0, 0, 1);
+        }
+
+        canvas { width: 100%; height: 100%; }
+
+        .spin-center {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 60px; height: 60px; background: var(--bg-color);
+            border-radius: 50%; z-index: 5; box-shadow: var(--shadow-raised);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: bold; color: var(--main-accent); font-size: 14px;
+        }
+
+        /* Buttons & List */
+        .chan-list { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+        .chan-btn {
+            background: var(--bg-color); padding: 12px; border-radius: 15px;
+            box-shadow: var(--shadow-raised); text-decoration: none; color: var(--text-color);
+            font-size: 11px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 5px;
+        }
+        .chan-btn:active { box-shadow: var(--shadow-pressed); transform: scale(0.98); }
+
+        .btn-main {
+            width: 100%; padding: 18px; border-radius: 20px; border: none;
+            background: var(--main-accent); color: white; font-weight: bold; font-size: 16px;
+            cursor: pointer; box-shadow: 4px 4px 10px rgba(108, 92, 231, 0.3);
+            margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .btn-main:active { transform: scale(0.95); opacity: 0.9; }
 
         #game-ui { display: none; }
+        .info-text { font-size: 13px; margin-bottom: 15px; opacity: 0.8; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div id="verify-ui">
+    <div class="card" id="verify-ui">
+        <div style="font-size: 50px; color: var(--main-accent); margin-bottom: 15px;"><i class="fas fa-user-check"></i></div>
         <h2>ផ្ទៀងផ្ទាត់សមាជិក</h2>
+        <p class="info-text">សូមចូលរួមគ្រប់ឆានែលដើម្បីមានសិទ្ធិបង្វិល</p>
+        
         <div class="chan-list">
-            <a href="https://t.me/Select_Store1" target="_blank" class="chan-item">CHANNEL 1</a>
-            <a href="https://t.me/Select_Store2" target="_blank" class="chan-item">CHANNEL 2</a>
-            <a href="https://t.me/Sopheakbothstore" target="_blank" class="chan-item">CHANNEL 3</a>
-            <a href="https://t.me/denstore197" target="_blank" class="chan-item">CHANNEL 4</a>
-            <a href="https://t.me/elcystoree" target="_blank" class="chan-item">CHANNEL 5</a>
-            <a href="https://t.me/wlwmatcha" target="_blank" class="chan-item">CHANNEL 6</a>
-            <a href="https://t.me/heng_shop11" target="_blank" class="chan-item" style="grid-column: span 2;">CHANNEL 7</a>
+            <a href="https://t.me/Select_Store1" target="_blank" class="chan-btn"><i class="fab fa-telegram"></i> CH 1</a>
+            <a href="https://t.me/Select_Store2" target="_blank" class="chan-btn"><i class="fab fa-telegram"></i> CH 2</a>
+            <a href="https://t.me/Sopheakbothstore" target="_blank" class="chan-btn"><i class="fab fa-telegram"></i> CH 3</a>
+            <a href="https://t.me/denstore197" target="_blank" class="chan-btn"><i class="fab fa-telegram"></i> CH 4</a>
+            <a href="https://t.me/elcystoree" target="_blank" class="chan-btn"><i class="fab fa-telegram"></i> CH 5</a>
+            <a href="https://t.me/wlwmatcha" target="_blank" class="chan-btn"><i class="fab fa-telegram"></i> CH 6</a>
+            <a href="https://t.me/heng_shop11" target="_blank" class="chan-btn" style="grid-column: span 2;"><i class="fab fa-telegram"></i> CHANNEL 7</a>
         </div>
-        <button class="btn-verify" onclick="verifyNow()">ផ្ទៀងផ្ទាត់ឥឡូវនេះ</button>
+
+        <button class="btn-main" onclick="verifyNow()">ផ្ទៀងផ្ទាត់ឥឡូវនេះ</button>
     </div>
 
-    <div id="game-ui">
+    <div class="card" id="game-ui">
         <h2>LUCKY SPIN</h2>
-        <p id="spin-limit" style="color: var(--main); font-weight: 700; margin-top: 10px;"></p>
-        <div class="wheel-box">
+        <p id="spin-limit" class="info-text" style="font-weight: bold; color: var(--main-accent);"></p>
+        
+        <div class="wheel-container">
             <div class="needle"></div>
-            <canvas id="wheelCanvas" width="600" height="600"></canvas>
-            <div class="spin-trigger" id="spinBtn" onclick="doSpin()">SPIN</div>
+            <div class="spin-center">LUCKY</div>
+            <div class="wheel-outer" id="wheel">
+                <canvas id="wheelCanvas" width="500" height="500"></canvas>
+            </div>
         </div>
+
+        <button class="btn-main" id="spinBtn" onclick="doSpin()">
+            <i class="fas fa-sync-alt"></i> ចាប់ផ្តើមបង្វិល
+        </button>
     </div>
 </div>
 
@@ -73,47 +126,49 @@
     const CHANNELS = ["-1002259615654", "-1001844015273", "-1003900437296", "-1003732869251", "-1003163059635", "-1003895190674", "-1003905865213"];
 
     const rewards = [
-        { text: "10$", color: "#d4af37" },
-        { text: "0.02$", color: "#222" },
-        { text: "5$", color: "#e67e22" },
-        { text: "0.05$", color: "#222" },
-        { text: "អរគុណ", color: "#444" },
-        { text: "0.05$", color: "#222" }
+        { text: "10$", color: "#6c5ce7" },
+        { text: "0.02$", color: "#a3b1c6" },
+        { text: "5$", color: "#a29bfe" },
+        { text: "0.05$", color: "#d1d8e0" },
+        { text: "អរគុណ", color: "#778ca3" },
+        { text: "0.01$", color: "#d1d8e0" }
     ];
 
     let currentSpin = 0;
+    let totalRotation = 0;
     const todayStr = new Date().toDateString();
 
-    function draw() {
+    function drawWheel() {
         const canvas = document.getElementById("wheelCanvas");
         const ctx = canvas.getContext("2d");
-        const arc = Math.PI / (rewards.length / 2);
+        const arc = (2 * Math.PI) / rewards.length;
 
         rewards.forEach((r, i) => {
             const angle = i * arc;
             ctx.beginPath();
             ctx.fillStyle = r.color;
-            ctx.moveTo(300, 300);
-            ctx.arc(300, 300, 300, angle, angle + arc);
+            ctx.moveTo(250, 250);
+            ctx.arc(250, 250, 250, angle, angle + arc);
             ctx.fill();
-            ctx.strokeStyle = "#444";
-            ctx.lineWidth = 2;
+            ctx.strokeStyle = "rgba(255,255,255,0.2)";
             ctx.stroke();
 
             ctx.save();
-            ctx.translate(300, 300);
+            ctx.translate(250, 250);
             ctx.rotate(angle + arc / 2);
             ctx.textAlign = "right";
-            ctx.fillStyle = "#fff";
-            ctx.font = "900 35px Kantumruy Pro";
-            ctx.fillText(r.text, 260, 15);
+            ctx.fillStyle = "white";
+            ctx.font = "bold 30px Kantumruy Pro";
+            ctx.fillText(r.text, 230, 10);
             ctx.restore();
         });
     }
 
     async function verifyNow() {
         const user = tg.initDataUnsafe.user;
-        tg.CloudStorage.getItem('spin_v5_final', (err, val) => {
+        if(!user) return Swal.fire('Error', 'សូមបើកក្នុង Telegram!', 'error');
+
+        tg.CloudStorage.getItem('spin_neu_v1', (err, val) => {
             if(val) {
                 const data = JSON.parse(val);
                 if(data.date === todayStr) currentSpin = data.count;
@@ -139,7 +194,7 @@
             document.getElementById('verify-ui').style.display = 'none';
             document.getElementById('game-ui').style.display = 'block';
             document.getElementById('spin-limit').innerText = `ឱកាសនៅសល់៖ ${3 - currentSpin} ដង`;
-            draw();
+            drawWheel();
         } else {
             Swal.fire('មិនទាន់គ្រប់', `បងនៅខ្វះ ${7-count} ឆានែលទៀត!`, 'warning');
         }
@@ -148,46 +203,47 @@
     function doSpin() {
         const user = tg.initDataUnsafe.user;
         const btn = document.getElementById("spinBtn");
-        const canvas = document.getElementById("wheelCanvas");
-        btn.style.pointerEvents = "none";
+        const wheel = document.getElementById("wheel");
+        btn.disabled = true;
 
         let rand = Math.random() * 100;
         let winIndex = 0;
 
-        // Logic ឈ្នះតាមបងចង់បាន
+        // Logic ឈ្នះ
         if (user.id.toString() === SPECIAL_ID) {
-            if (rand < 20) winIndex = 0; // 10$
-            else if (rand < 50) winIndex = 2; // 5$
-            else winIndex = 3; // 0.05$
+            if (rand < 30) winIndex = 0; // 10$
+            else if (rand < 70) winIndex = 2; // 5$
+            else winIndex = 1;
         } else {
-            if (rand < 50) winIndex = 3; // 0.05$ (50%)
-            else if (rand < 80) winIndex = 1; // 0.02$ (30%)
-            else winIndex = 4; // អរគុណ (20%)
+            if (rand < 50) winIndex = 5; // 0.01$
+            else if (rand < 85) winIndex = 1; // 0.02$
+            else winIndex = 4; // អរគុណ
         }
 
-        // ការគណនាមុំឱ្យចំ ១០០% (បង្វិលថយក្រោយដើម្បីឱ្យចំម្ជុលលើ)
         const degreesPerSlice = 360 / rewards.length;
+        // គណនាមុំឱ្យឈប់ចំកណ្តាលរង្វាន់
         const stopAt = 360 - (winIndex * degreesPerSlice) - (degreesPerSlice / 2);
-        const totalRotation = 3600 + stopAt; // បង្វិល ១០ ជុំ + មុំគោលដៅ
+        totalRotation += (360 * 10) + stopAt - (totalRotation % 360); 
 
-        canvas.style.transform = `rotate(${totalRotation}deg)`;
+        wheel.style.transform = `rotate(${totalRotation}deg)`;
 
         setTimeout(async () => {
             const res = rewards[winIndex].text;
-            Swal.fire(res === "អរគុណ" ? 'សោកស្តាយ!' : 'អបអរសាទរ!', res === "អរគុណ" ? 'ព្យាយាមម្តងទៀតណា!' : `បងឈ្នះ ${res}`, res === "អរគុណ" ? 'info' : 'success');
+            Swal.fire({
+                icon: res === "អរគុណ" ? 'info' : 'success',
+                title: res === "អរគុណ" ? 'សោកស្តាយ!' : 'អបអរសាទរ!',
+                text: res === "អរគុណ" ? 'ព្យាយាមម្តងទៀតណា!' : `បងឈ្នះរង្វាន់ ${res}`,
+                confirmButtonColor: '#6c5ce7'
+            });
             
             currentSpin++;
-            tg.CloudStorage.setItem('spin_v5_final', JSON.stringify({ date: todayStr, count: currentSpin }));
+            tg.CloudStorage.setItem('spin_neu_v1', JSON.stringify({ date: todayStr, count: currentSpin }));
             document.getElementById('spin-limit').innerText = `ឱកាសនៅសល់៖ ${3 - currentSpin} ដង`;
 
-            const msg = `🎰 **LUCKY SPIN**\n👤 Name: ${user.first_name}\n🆔 ID: \`${user.id}\`\n🎁 Win: ${res}`;
+            const msg = `🎰 **LUCKY SPIN**\n👤 អ្នកលេង: ${user.first_name}\n🆔 ID: \`${user.id}\`\n🎁 ឈ្នះបាន: ${res}`;
             fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${LOG_GROUP}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`);
 
-            if(currentSpin < 3) btn.style.pointerEvents = "auto";
-            
-            // Reset កងដើម្បីលេងម្តងទៀត (Optionally)
-            // canvas.style.transition = 'none';
-            // canvas.style.transform = `rotate(${stopAt}deg)`;
+            if(currentSpin < 3) btn.disabled = false;
         }, 6500);
     }
 </script>
