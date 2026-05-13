@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lucky Spinner | Neumorphism Style</title>
+    <title>Lucky Spinner VIP | 2026</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;700&family=Moul&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         :root {
@@ -20,81 +21,90 @@
         body { background-color: var(--bg-color); color: var(--text-color); display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow: hidden; }
 
         .container { width: 100%; max-width: 420px; padding: 20px; text-align: center; }
-        .card { background: var(--bg-color); border-radius: 30px; padding: 30px; box-shadow: var(--shadow-raised); }
+        .card { background: var(--bg-color); border-radius: 30px; padding: 25px; box-shadow: var(--shadow-raised); }
 
-        /* Jackpot Bar */
-        .jackpot-bar { display: flex; gap: 15px; justify-content: center; margin-bottom: 30px; }
-        .p-box { background: var(--bg-color); border-radius: 15px; padding: 10px 20px; box-shadow: var(--shadow-raised); min-width: 100px; }
-        .p-box span { font-size: 10px; color: #888; display: block; }
-        .p-box b { color: var(--main-accent); font-size: 1.2rem; }
+        h2 { font-family: 'Moul'; font-size: 18px; color: var(--main-accent); margin-bottom: 15px; }
 
-        /* Slider Container */
-        .spinner-container {
-            position: relative;
-            width: 300px; height: 110px;
-            background: var(--bg-color); border-radius: 20px;
-            margin: 0 auto; overflow: hidden;
-            box-shadow: var(--shadow-pressed);
-            border: 4px solid var(--bg-color);
+        /* ប៊ូតុងឆានែល */
+        .chan-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .chan-link { 
+            background: var(--bg-color); padding: 12px; border-radius: 15px; 
+            box-shadow: var(--shadow-raised); text-decoration: none; color: var(--text-color);
+            font-size: 11px; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 6px;
         }
+        .chan-link:active { box-shadow: var(--shadow-pressed); transform: scale(0.95); }
+        .chan-link i { color: #0088cc; font-size: 16px; }
 
+        /* Spinner */
+        .spinner-container {
+            position: relative; width: 300px; height: 110px;
+            background: var(--bg-color); border-radius: 20px;
+            margin: 20px auto; overflow: hidden;
+            box-shadow: var(--shadow-pressed); border: 4px solid var(--bg-color);
+        }
         .pointer {
             position: absolute; top: 0; left: 50%; transform: translateX(-50%);
             width: 4px; height: 100%; background: #ff4757; z-index: 10;
             box-shadow: 0 0 10px rgba(255, 71, 87, 0.5);
         }
-
         .wheel {
             display: flex; align-items: center; height: 100%;
             transition: transform 8s cubic-bezier(0.1, 0, 0, 1);
             will-change: transform;
         }
-
         .slot {
             min-width: 100px; max-width: 100px; height: 100%;
             display: flex; align-items: center; justify-content: center;
-            border-right: 1px solid rgba(0,0,0,0.05);
-            font-weight: bold; font-size: 1.2rem;
-            box-sizing: border-box;
+            border-right: 1px solid rgba(0,0,0,0.05); font-weight: bold; font-size: 1.2rem;
         }
 
-        .btn-spin {
-            margin-top: 40px; width: 100%; padding: 18px;
-            background: var(--main-accent); color: white; border: none;
-            border-radius: 20px; font-size: 1.1rem; font-weight: bold; cursor: pointer;
-            box-shadow: 4px 4px 10px rgba(108, 92, 231, 0.3);
+        .btn-action {
+            width: 100%; padding: 18px; border-radius: 20px; border: none;
+            background: var(--main-accent); color: white; font-weight: bold; font-size: 16px;
+            cursor: pointer; box-shadow: 4px 4px 10px rgba(108, 92, 231, 0.3);
+            display: flex; align-items: center; justify-content: center; gap: 10px;
         }
-        .btn-spin:active { transform: scale(0.98); }
-        .btn-spin:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-action:disabled { opacity: 0.5; }
 
-        #verify-ui { display: block; }
         #game-ui { display: none; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <!-- Verification Section -->
+    <!-- UI ផ្ទៀងផ្ទាត់សមាជិក -->
     <div class="card" id="verify-ui">
-        <h2 style="margin-bottom: 20px;">ផ្ទៀងផ្ទាត់សមាជិក</h2>
-        <p style="font-size: 14px; margin-bottom: 20px; opacity: 0.7;">សូមចូលរួម Channel ទាំងអស់ដើម្បីលេង</p>
-        <button class="btn-spin" onclick="checkMembership()">ផ្ទៀងផ្ទាត់</button>
-    </div>
-
-    <!-- Game Section -->
-    <div class="card" id="game-ui">
-        <div class="jackpot-bar">
-            <div class="p-box"><span>JACKPOT</span><b>5$</b></div>
-            <div class="p-box"><span>MEGA</span><b>1$</b></div>
+        <h2>ផ្ទៀងផ្ទាត់សមាជិក</h2>
+        <p style="font-size: 13px; margin-bottom: 20px; opacity: 0.8;">សូមចូលរួមឆានែលខាងក្រោមឱ្យគ្រប់សិន៖</p>
+        
+        <div class="chan-grid">
+            <a href="https://t.me/Select_Store1" target="_blank" class="chan-link"><i class="fab fa-telegram"></i> Channel 1</a>
+            <a href="https://t.me/Select_Store2" target="_blank" class="chan-link"><i class="fab fa-telegram"></i> Channel 2</a>
+            <a href="https://t.me/Sopheakbothstore" target="_blank" class="chan-link"><i class="fab fa-telegram"></i> Channel 3</a>
+            <a href="https://t.me/denstore197" target="_blank" class="chan-link"><i class="fab fa-telegram"></i> Channel 4</a>
+            <a href="https://t.me/elcystoree" target="_blank" class="chan-link"><i class="fab fa-telegram"></i> Channel 5</a>
+            <a href="https://t.me/wlwmatcha" target="_blank" class="chan-link"><i class="fab fa-telegram"></i> Channel 6</a>
+            <a href="https://t.me/heng_shop11" target="_blank" class="chan-link" style="grid-column: span 2;"><i class="fab fa-telegram"></i> Channel 7</a>
         </div>
 
+        <button class="btn-action" onclick="checkMembership()">
+            <i class="fas fa-user-check"></i> ពិនិត្យសមាជិកភាព
+        </button>
+    </div>
+
+    <!-- UI ហ្គេមបង្វិល -->
+    <div class="card" id="game-ui">
+        <h2>LUCKY SPIN</h2>
+        <p id="limit-text" style="font-size: 13px; font-weight: bold; color: var(--main-accent); margin-bottom: 10px;"></p>
+        
         <div class="spinner-container">
             <div class="pointer"></div>
             <div id="wheel" class="wheel"></div>
         </div>
 
-        <button id="spinBtn" class="btn-spin" onclick="startSpin()">បង្វិលឥឡូវនេះ</button>
-        <p id="limit-text" style="margin-top: 15px; font-size: 12px; font-weight: bold; color: var(--main-accent);"></p>
+        <button id="spinBtn" class="btn-action" onclick="startSpin()">
+            <i class="fas fa-play"></i> បង្វិលឥឡូវនេះ
+        </button>
     </div>
 </div>
 
@@ -107,13 +117,13 @@
     const CHANNELS = ["-1002259615654", "-1001844015273", "-1003900437296", "-1003732869251", "-1003163059635", "-1003895190674", "-1003905865213"];
 
     const prizes = [
-        { label: "អរគុណ", weight: 40, color: "#888" },
+        { label: "អរគុណ", weight: 45, color: "#888" },
         { label: "0.01$", weight: 30, color: "#58a6ff" },
-        { label: "0.02$", weight: 20, color: "#2ecc71" },
+        { label: "0.02$", weight: 15, color: "#2ecc71" },
         { label: "0.05$", weight: 8, color: "#1abc9c" },
-        { label: "0.10$", weight: 1.9, color: "#f1c40f" },
-        { label: "1$",     weight: 0.09, color: "#ff416c" },
-        { label: "5$",     weight: 0.01, color: "#ff4757" }
+        { label: "0.10$", weight: 1.5, color: "#f1c40f" },
+        { label: "1$",     weight: 0.4, color: "#ff416c" },
+        { label: "5$",     weight: 0.1, color: "#ff4757" }
     ];
 
     const wheel = document.getElementById('wheel');
@@ -133,24 +143,22 @@
 
     async function checkMembership() {
         const user = tg.initDataUnsafe.user;
-        if(!user) return Swal.fire('Error', 'Please open in Telegram', 'error');
+        if(!user) return Swal.fire('Error', 'សូមបើកក្នុង Telegram', 'error');
 
         Swal.fire({ title: 'កំពុងពិនិត្យ...', didOpen: () => Swal.showLoading() });
         
-        let isMember = true;
+        let count = 0;
         for (let id of CHANNELS) {
             try {
                 let r = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getChatMember?chat_id=${id}&user_id=${user.id}`);
                 let d = await r.json();
-                if(!d.ok || !['member','administrator','creator'].includes(d.result.status)) {
-                    isMember = false; break;
-                }
-            } catch(e) { isMember = false; }
+                if(d.ok && ['member','administrator','creator'].includes(d.result.status)) count++;
+            } catch(e) {}
         }
 
         Swal.close();
-        if(isMember) {
-            tg.CloudStorage.getItem('spin_v100', (err, val) => {
+        if(count >= 7) {
+            tg.CloudStorage.getItem('spin_final_v1', (err, val) => {
                 if(val) {
                     const data = JSON.parse(val);
                     if(data.date === todayStr) currentSpin = data.count;
@@ -163,7 +171,7 @@
                 initWheel();
             });
         } else {
-            Swal.fire('មិនទាន់គ្រប់', 'សូមចូលរួម Channel ឱ្យបានគ្រប់ទាំងអស់សិន!', 'warning');
+            Swal.fire('មិនទាន់គ្រប់', `បងនៅខ្វះ ${7-count} ឆានែលទៀតដែលមិនទាន់បានចូលរួម!`, 'warning');
         }
     }
 
@@ -171,7 +179,6 @@
         const btn = document.getElementById('spinBtn');
         btn.disabled = true;
 
-        // ១. គណនាឈ្នះតាមសំណាង Weight (មិនរើស ID)
         let total = prizes.reduce((s, p) => s + p.weight, 0);
         let r = Math.random() * total;
         let acc = 0;
@@ -182,14 +189,12 @@
             if (r <= acc) { winPrize = p; break; }
         }
 
-        // ២. កំណត់ប្រឡោះទី ១២០ ជាគោលដៅឈប់
         const targetIdx = 120;
         const allSlots = document.querySelectorAll('.slot');
         allSlots[targetIdx].innerText = winPrize.label;
         allSlots[targetIdx].style.color = winPrize.color;
         allSlots[targetIdx].style.background = "rgba(108, 92, 231, 0.1)";
 
-        // ៣. គណនា Pixel ឱ្យឈប់ចំកណ្តាលព្រួញបេះបិទ
         const stopPos = (targetIdx * itemW) - (containerW / 2) + (itemW / 2);
 
         wheel.style.transition = "transform 8s cubic-bezier(0.1, 0, 0, 1)";
@@ -198,18 +203,17 @@
         setTimeout(() => {
             Swal.fire({
                 title: winPrize.label === "អរគុណ" ? 'សោកស្តាយ' : 'អបអរសាទរ',
-                text: winPrize.label === "អរគុណ" ? 'ព្យាយាមម្តងទៀតណា!' : `បងឈ្នះបានរង្វាន់ ${winPrize.label}`,
+                text: winPrize.label === "អរគុណ" ? 'ព្យាយាមម្តងទៀតនៅថ្ងៃស្អែក!' : `បងឈ្នះបានរង្វាន់ ${winPrize.label}`,
                 icon: winPrize.label === "អរគុណ" ? 'info' : 'success',
                 confirmButtonColor: '#6c5ce7'
             });
 
             currentSpin++;
-            tg.CloudStorage.setItem('spin_v100', JSON.stringify({ date: todayStr, count: currentSpin }));
+            tg.CloudStorage.setItem('spin_final_v1', JSON.stringify({ date: todayStr, count: currentSpin }));
             document.getElementById('limit-text').innerText = `ឱកាសនៅសល់៖ ${3 - currentSpin} ដង`;
 
-            // Log to Group
             const user = tg.initDataUnsafe.user;
-            const msg = `🎰 **LUCKY SPIN**\n👤 Name: ${user.first_name}\n🆔 ID: \`${user.id}\`\n🎁 Win: ${winPrize.label}`;
+            const msg = `🎰 **LUCKY SPIN**\n👤 អ្នកលេង: ${user.first_name}\n🆔 ID: \`${user.id}\`\n🎁 ឈ្នះបាន: ${winPrize.label}`;
             fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${LOG_GROUP}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`);
 
             if(currentSpin < 3) {
@@ -226,4 +230,3 @@
 
 </body>
 </html>
-
