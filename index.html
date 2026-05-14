@@ -3,14 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lucky Number 1-1000</title>
+    <title>Lucky Number 1-1000 | 9 Channels</title>
+    
+    <!-- Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <!-- Firebase SDK -->
+    
+    <!-- Firebase SDK (Version Compat) -->
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+    
+    <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;600;700&family=Moul&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
         :root {
             --bg-color: #e0e5ec;
@@ -19,24 +27,95 @@
             --shadow-raised: 9px 9px 18px #a3b1c6, -9px -9px 18px #ffffff;
             --shadow-pressed: inset 6px 6px 12px #a3b1c6, inset -6px -6px 12px #ffffff;
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Kantumruy Pro', sans-serif; }
-        body { background-color: var(--bg-color); color: var(--text-color); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 15px; }
-        .container { width: 100%; max-width: 400px; }
-        .card { background: var(--bg-color); border-radius: 40px; padding: 30px 20px; box-shadow: var(--shadow-raised); text-align: center; }
-        h2 { font-family: 'Moul'; font-size: 18px; color: var(--main-accent); margin-bottom: 10px; }
-        .hint { font-size: 12px; opacity: 0.8; margin-bottom: 20px; }
-        
-        /* Channel Grid */
-        .channel-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 25px; }
-        .chan-btn { background: var(--bg-color); padding: 12px; border-radius: 15px; box-shadow: var(--shadow-raised); text-decoration: none; color: var(--text-color); font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 5px; }
-        .chan-btn i { color: #0088cc; }
 
-        /* Input Area */
-        #game-area { display: none; animation: fadeIn 0.5s; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .input-box { width: 100%; padding: 18px; border-radius: 20px; border: none; background: var(--bg-color); box-shadow: var(--shadow-pressed); text-align: center; font-size: 24px; font-weight: bold; color: var(--main-accent); margin-bottom: 20px; outline: none; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Kantumruy Pro', sans-serif; }
         
-        .btn-action { width: 100%; padding: 18px; border-radius: 20px; border: none; background: var(--main-accent); color: white; font-weight: bold; font-size: 16px; cursor: pointer; box-shadow: 5px 5px 15px rgba(108, 92, 231, 0.4); display: flex; align-items: center; justify-content: center; gap: 10px; }
+        body { 
+            background-color: var(--bg-color); 
+            color: var(--text-color); 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            padding: 15px;
+        }
+
+        .container { width: 100%; max-width: 400px; }
+
+        .card { 
+            background: var(--bg-color); 
+            border-radius: 40px; 
+            padding: 30px 20px; 
+            box-shadow: var(--shadow-raised); 
+            text-align: center; 
+        }
+
+        h2 { font-family: 'Moul'; font-size: 18px; color: var(--main-accent); margin-bottom: 10px; }
+        
+        .hint { font-size: 12px; opacity: 0.8; margin-bottom: 20px; line-height: 1.6; }
+
+        /* Channel List Styling */
+        .channel-grid { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 10px; 
+            margin-bottom: 25px; 
+        }
+
+        .chan-btn { 
+            background: var(--bg-color); 
+            padding: 10px; 
+            border-radius: 12px; 
+            box-shadow: var(--shadow-raised); 
+            text-decoration: none; 
+            color: var(--text-color); 
+            font-size: 10px; 
+            font-weight: 700; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 5px; 
+        }
+
+        .chan-btn:active { box-shadow: var(--shadow-pressed); }
+        .chan-btn i { color: #0088cc; font-size: 14px; }
+
+        /* Form Styling */
+        #game-area { display: none; animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .input-box { 
+            width: 100%; 
+            padding: 20px; 
+            border-radius: 20px; 
+            border: none; 
+            background: var(--bg-color); 
+            box-shadow: var(--shadow-pressed); 
+            text-align: center; 
+            font-size: 28px; 
+            font-weight: bold; 
+            color: var(--main-accent); 
+            margin-bottom: 20px; 
+            outline: none; 
+        }
+
+        .btn-action { 
+            width: 100%; 
+            padding: 18px; 
+            border-radius: 20px; 
+            border: none; 
+            background: var(--main-accent); 
+            color: white; 
+            font-weight: bold; 
+            font-size: 16px; 
+            cursor: pointer; 
+            box-shadow: 5px 5px 15px rgba(108, 92, 231, 0.4); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 10px; 
+        }
+
         .btn-action:active { transform: scale(0.95); }
     </style>
 </head>
@@ -44,31 +123,40 @@
 
 <div class="container">
     <div class="card">
-        <!-- Step 1: Verification -->
+        <!-- Section 1: Verification -->
         <div id="verify-area">
-            <i class="fas fa-user-check" style="font-size: 40px; color: var(--main-accent); margin-bottom: 15px;"></i>
-            <h2>ផ្ទៀងផ្ទាត់សមាជិក</h2>
-            <p class="hint">សូមចូលរួមទាំង ៨ ឆានែល ដើម្បីលេង</p>
+            <i class="fas fa-user-check" style="font-size: 45px; color: var(--main-accent); margin-bottom: 15px;"></i>
+            <h2>ផ្ទៀងផ្ទាត់ការចូលរួម</h2>
+            <p class="hint">សូមចូលរួមឆានែលទាំង ៩ ខាងក្រោម<br>ដើម្បីមានសិទ្ធិជ្រើសរើសលេខសំណាង!</p>
+            
             <div class="channel-grid">
-                <a href="https://t.me/Select_Store1" target="_blank" class="chan-btn"><i class="fab fa-telegram"></i> CH 1</a>
-                <a href="https://t.me/Select_Store2" target="_blank" class="chan-btn"><i class="fab fa-telegram"></i> CH 2</a>
-                <a href="https://t.me/Sopheakbothstore" target="_blank" class="chan-btn"><i class="fab fa-telegram"></i> CH 3</a>
-                <a href="https://t.me/denstore197" target="_blank" class="chan-btn"><i class="fab fa-telegram"></i> CH 4</a>
-                <a href="https://t.me/elcystoree" target="_blank" class="chan-btn"><i class="fab fa-telegram"></i> CH 5</a>
-                <a href="https://t.me/wlwmatcha" target="_blank" class="chan-btn"><i class="fab fa-telegram"></i> CH 6</a>
-                <a href="https://t.me/kagurastore10" target="_blank" class="chan-btn"><i class="fab fa-telegram"></i> CH 7</a>
-                <a href="https://t.me/Toladiy168" target="_blank" class="chan-btn"><i class="fab fa-telegram"></i> CH 8</a>
+                <a href="https://t.me/Select_Store1" target="_blank" class="chan-btn"><i class="fab fa-telegram"></i> Channel 1</a>
+                <a href="https://t.me/Select_Store2" target="_blank" class="chan-btn"><i class="fab fa-telegram"></i> Channel 2</a>
+                <a href="https://t.me/Sopheakbothstore" target="_blank" class="chan-btn"><i class="fab fa-telegram"></i> Channel 3</a>
+                <a href="https://t.me/denstore197" target="_blank" class="chan-btn"><i class="fab fa-telegram"></i> Channel 4</a>
+                <a href="https://t.me/elcystoree" target="_blank" class="chan-btn"><i class="fab fa-telegram"></i> Channel 5</a>
+                <a href="https://t.me/wlwmatcha" target="_blank" class="chan-btn"><i class="fab fa-telegram"></i> Channel 6</a>
+                <a href="https://t.me/kagurastore10" target="_blank" class="chan-btn"><i class="fab fa-telegram"></i> Channel 7</a>
+                <a href="https://t.me/Toladiy168" target="_blank" class="chan-btn"><i class="fab fa-telegram"></i> Channel 8</a>
+                <a href="https://t.me/memosa_bns" target="_blank" class="chan-btn" style="grid-column: span 2;"><i class="fab fa-telegram"></i> Channel 9 (Memosa BNS)</a>
             </div>
-            <button class="btn-action" onclick="checkAllChannels()">ពិនិត្យការចូលរួម</button>
+
+            <button class="btn-action" onclick="checkAllStatus()">
+                <i class="fas fa-search"></i> ពិនិត្យលក្ខខណ្ឌ
+            </button>
         </div>
 
-        <!-- Step 2: Game Area -->
+        <!-- Section 2: Input Number -->
         <div id="game-area">
-            <i class="fas fa-dice-d20" style="font-size: 40px; color: #ff4757; margin-bottom: 15px;"></i>
+            <i class="fas fa-trophy" style="font-size: 45px; color: #ff4757; margin-bottom: 15px;"></i>
             <h2>ជ្រើសរើសលេខសំណាង</h2>
-            <p class="hint">បំពេញលេខពី 1 ដល់ 1000 (មិនឱ្យស្ទួនគ្នា)</p>
-            <input type="number" id="luckynumber" class="input-box" placeholder="???" min="1" max="1000">
-            <button class="btn-action" onclick="submitNumber()">បញ្ជាក់លេខសំណាង</button>
+            <p class="hint">បំពេញលេខពី 1 ដល់ 1000<br>(បញ្ជាក់៖ លេងបានតែម្តងគត់)</p>
+            
+            <input type="number" id="luckynumber" class="input-box" placeholder="1-1000" oninput="if(value>1000)value=1000;if(value<1)value=''">
+            
+            <button class="btn-action" onclick="submitLuckyNumber()">
+                <i class="fas fa-check-circle"></i> បញ្ជាក់លេខរបស់ខ្ញុំ
+            </button>
         </div>
     </div>
 </div>
@@ -77,7 +165,6 @@
     const tg = window.Telegram.WebApp;
     tg.expand();
 
-    // Firebase Config
     const firebaseConfig = {
         apiKey: "AIzaSyD0CoOErw8unJ2lGF3K4BqTAnq0eFq3ycI",
         authDomain: "myessayapp.firebaseapp.com",
@@ -87,82 +174,138 @@
         messagingSenderId: "410054064875",
         appId: "1:410054064875:web:7d073851f478564eb39cae"
     };
+
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
     const BOT_TOKEN = "8212122943:AAFOREIno5CXRklS_X9Kiwz6iAput2zExtI";
     const LOG_GROUP = "-1003546587142";
+    
+    // IDs of All 9 Channels
     const CHANNELS = [
         "-1002259615654", "-1001844015273", "-1003900437296", "-1003732869251", 
-        "-1003163059635", "-1003895190674", "-1003298928003", "-1003644503612"
+        "-1003163059635", "-1003895190674", "-1003298928003", "-1003644503612",
+        "-1003652130893" // Added Channel 9
     ];
 
     const user = tg.initDataUnsafe.user;
 
-    async function checkAllChannels() {
-        if (!user) return Swal.fire('Error', 'សូមបើកក្នុង Telegram', 'error');
+    async function checkAllStatus() {
+        if (!user) {
+            Swal.fire('Error', 'សូមបើកតាម Telegram!', 'error');
+            return;
+        }
+
         Swal.fire({ title: 'កំពុងពិនិត្យ...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
 
-        let joined = 0;
-        for (const id of CHANNELS) {
-            try {
-                const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getChatMember?chat_id=${id}&user_id=${user.id}`);
-                const data = await res.json();
-                if (data.ok && ['member','administrator','creator'].includes(data.result.status)) joined++;
-            } catch(e) {}
-        }
-        Swal.close();
+        try {
+            // 1. Check if User ID already exists (One-time play)
+            const userSnapshot = await db.ref('registered_users/' + user.id).once('value');
+            if (userSnapshot.exists()) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'អស់សិទ្ធិលេង',
+                    text: 'បងបានលេងរួចម្តងហើយ មិនអាចលេងម្តងទៀតបានទេ!',
+                    confirmButtonColor: '#6c5ce7'
+                }).then(() => tg.close());
+                return;
+            }
 
-        if (joined < 8) {
-            Swal.fire('មិនទាន់គ្រប់', `បងនៅខ្វះ ${8-joined} ឆានែលទៀត!`, 'warning');
-        } else {
-            document.getElementById('verify-area').style.display = 'none';
-            document.getElementById('game-area').style.display = 'block';
+            // 2. Check Membership for 9 Channels
+            let joinedCount = 0;
+            for (const channelId of CHANNELS) {
+                const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getChatMember?chat_id=${channelId}&user_id=${user.id}`);
+                const data = await res.json();
+                if (data.ok && ['member', 'administrator', 'creator'].includes(data.result.status)) {
+                    joinedCount++;
+                }
+            }
+
+            Swal.close();
+
+            if (joinedCount < 9) {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'មិនទាន់គ្រប់លក្ខខណ្ឌ',
+                    text: `បងនៅខ្វះការ Join ចំនួន ${9 - joinedCount} ឆានែលទៀត!`,
+                    confirmButtonColor: '#6c5ce7'
+                });
+            } else {
+                document.getElementById('verify-area').style.display = 'none';
+                document.getElementById('game-area').style.display = 'block';
+            }
+
+        } catch (error) {
+            Swal.fire('Error', 'មានបញ្ហាក្នុងការតភ្ជាប់!', 'error');
         }
     }
 
-    async function submitNumber() {
-        const num = document.getElementById('luckynumber').value;
-        if (!num || num < 1 || num > 1000) return Swal.fire('ខុសទម្រង់', 'សូមជ្រើសរើសលេខចន្លោះពី 1-1000', 'error');
+    async function submitLuckyNumber() {
+        const numberInput = document.getElementById('luckynumber').value;
 
-        Swal.fire({ title: 'កំពុងត្រួតពិនិត្យលេខ...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+        if (!numberInput || numberInput < 1 || numberInput > 1000) {
+            Swal.fire('លេខមិនត្រឹមត្រូវ', 'សូមបំពេញលេខចន្លោះពី 1 ដល់ 1000!', 'error');
+            return;
+        }
 
-        // Check Unique in Firebase
-        const snapshot = await db.ref('lucky_numbers/' + num).once('value');
-        if (snapshot.exists()) {
-            Swal.fire('លេខនេះមានគេយកហើយ', 'សូមប្តូរជ្រើសរើសលេខផ្សេងទៀត!', 'warning');
-        } else {
-            // Save to Firebase
-            await db.ref('lucky_numbers/' + num).set({
-                userId: user.id,
+        Swal.fire({ title: 'កំពុងរក្សាទុក...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+        try {
+            // 3. Check if Number is already taken
+            const numberSnapshot = await db.ref('lucky_numbers/' + numberInput).once('value');
+            if (numberSnapshot.exists()) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'លេខនេះមានគេយកហើយ',
+                    text: 'សូមជ្រើសរើសលេខផ្សេងទៀត!',
+                    confirmButtonColor: '#ff4757'
+                });
+                return;
+            }
+
+            // Save Data
+            const timestamp = new Date().toLocaleString('km-KH');
+            
+            await db.ref('registered_users/' + user.id).set({
                 name: user.first_name,
-                time: new Date().toISOString()
+                number: numberInput,
+                date: timestamp
             });
 
-            // Send Log to Group
-            const msg = `
-🎯 **អ្នកចូលរួមថ្មី (Random 1-1000)**
+            await db.ref('lucky_numbers/' + numberInput).set({
+                ownerId: user.id
+            });
+
+            // Send to Group
+            const message = `
+🎁 **ចុះឈ្មោះលេខសំណាង (9 CH)** 🎁
 ━━━━━━━━━━━━━━━━━━
 👤 **ឈ្មោះ:** ${user.first_name}
 🆔 **ID:** \`${user.id}\`
-🔢 **លេខសំណាង:** \`${num}\`
+🔢 **លេខ:** 【 **${numberInput}** 】
+🕒 **ម៉ោង:** ${timestamp}
 ━━━━━━━━━━━━━━━━━━
             `;
+
             await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chat_id: LOG_GROUP, text: msg, parse_mode: 'Markdown' })
+                body: JSON.stringify({ chat_id: LOG_GROUP, text: message, parse_mode: 'Markdown' })
             });
 
             Swal.fire({
                 icon: 'success',
                 title: 'ជោគជ័យ!',
-                text: `លេខ ${num} ត្រូវបានកត់ត្រាទុកសម្រាប់បងហើយ!`,
-                confirmButtonColor: '#6c5ce7'
+                text: `លេខ ${numberInput} ត្រូវបានរក្សាទុក!`,
+                confirmButtonColor: '#2ecc71'
             }).then(() => tg.close());
+
+        } catch (error) {
+            Swal.fire('Error', 'បរាជ័យ!', 'error');
         }
     }
 </script>
+
 </body>
 </html>
 
