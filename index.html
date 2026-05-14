@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Get Your Reward</title>
+    <title>Lucky Number 1-1000</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;600;700&family=Moul&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -16,50 +19,24 @@
             --shadow-raised: 9px 9px 18px #a3b1c6, -9px -9px 18px #ffffff;
             --shadow-pressed: inset 6px 6px 12px #a3b1c6, inset -6px -6px 12px #ffffff;
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Kantumruy Pro', sans-serif; }
         body { background-color: var(--bg-color); color: var(--text-color); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 15px; }
-
         .container { width: 100%; max-width: 400px; }
         .card { background: var(--bg-color); border-radius: 40px; padding: 30px 20px; box-shadow: var(--shadow-raised); text-align: center; }
-
-        .icon-box { 
-            width: 80px; height: 80px; background: var(--bg-color); margin: 0 auto 15px;
-            border-radius: 50%; box-shadow: var(--shadow-raised);
-            display: flex; align-items: center; justify-content: center; font-size: 35px; color: var(--main-accent);
-        }
-
         h2 { font-family: 'Moul'; font-size: 18px; color: var(--main-accent); margin-bottom: 10px; }
-        .hint { font-size: 12px; opacity: 0.8; margin-bottom: 25px; line-height: 1.6; }
+        .hint { font-size: 12px; opacity: 0.8; margin-bottom: 20px; }
+        
+        /* Channel Grid */
+        .channel-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 25px; }
+        .chan-btn { background: var(--bg-color); padding: 12px; border-radius: 15px; box-shadow: var(--shadow-raised); text-decoration: none; color: var(--text-color); font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 5px; }
+        .chan-btn i { color: #0088cc; }
 
-        /* Gatekeeper (Channel Area) */
-        #channel-area { display: block; }
-        .channel-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 25px; }
-        .chan-btn { 
-            background: var(--bg-color); padding: 15px; border-radius: 18px; 
-            box-shadow: var(--shadow-raised); text-decoration: none; color: var(--text-color);
-            font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 6px;
-        }
-        .chan-btn:active { box-shadow: var(--shadow-pressed); transform: scale(0.96); }
-        .chan-btn i { color: #0088cc; font-size: 16px; }
-
-        /* Registration Area (Hidden initially) */
-        #register-area { display: none; animation: fadeIn 0.5s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        .info-list { background: var(--bg-color); border-radius: 25px; padding: 20px; box-shadow: var(--shadow-pressed); margin-bottom: 25px; text-align: left; }
-        .info-item { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 13px; border-bottom: 1px solid rgba(0,0,0,0.03); padding-bottom: 8px; }
-        .info-item:last-child { border: none; margin-bottom: 0; }
-        .info-item span { opacity: 0.6; }
-
-        .price-tag { font-size: 22px; font-weight: 800; color: #ff4757; margin-bottom: 25px; display: block; }
-
-        .btn-action {
-            width: 100%; padding: 18px; border-radius: 20px; border: none;
-            background: var(--main-accent); color: white; font-weight: bold; font-size: 16px;
-            cursor: pointer; box-shadow: 5px 5px 15px rgba(108, 92, 231, 0.4);
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-        }
+        /* Input Area */
+        #game-area { display: none; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .input-box { width: 100%; padding: 18px; border-radius: 20px; border: none; background: var(--bg-color); box-shadow: var(--shadow-pressed); text-align: center; font-size: 24px; font-weight: bold; color: var(--main-accent); margin-bottom: 20px; outline: none; }
+        
+        .btn-action { width: 100%; padding: 18px; border-radius: 20px; border: none; background: var(--main-accent); color: white; font-weight: bold; font-size: 16px; cursor: pointer; box-shadow: 5px 5px 15px rgba(108, 92, 231, 0.4); display: flex; align-items: center; justify-content: center; gap: 10px; }
         .btn-action:active { transform: scale(0.95); }
     </style>
 </head>
@@ -67,45 +44,32 @@
 
 <div class="container">
     <div class="card">
-        <div class="icon-box"><i class="fas fa-gift"></i></div>
-        
-        <!-- ផ្ទាំងទី១៖ បង្ខំឱ្យចូល Channel -->
-        <div id="channel-area">
-            <h2>ចែកលុយសមាជិក</h2>
-            <p class="hint">សូមចូលរួមទាំង ៦ ឆានែលខាងក្រោមសិន<br>ទើបអាចចុះឈ្មោះទទួលលុយបាន!</p>
-            
+        <!-- Step 1: Verification -->
+        <div id="verify-area">
+            <i class="fas fa-user-check" style="font-size: 40px; color: var(--main-accent); margin-bottom: 15px;"></i>
+            <h2>ផ្ទៀងផ្ទាត់សមាជិក</h2>
+            <p class="hint">សូមចូលរួមទាំង ៨ ឆានែល ដើម្បីលេង</p>
             <div class="channel-grid">
-                <a href="https://t.me/Select_Store1" target="_blank" class="chan-btn"><i class="fab fa-telegram"></i> Channel 1</a>
-                <a href="https://t.me/Select_Store2" target="_blank" class="chan-btn"><i class="fab fa-telegram"></i> Channel 2</a>
-                <a href="https://t.me/Sopheakbothstore" target="_blank" class="chan-btn"><i class="fab fa-telegram"></i> Channel 3</a>
-                <a href="https://t.me/denstore197" target="_blank" class="chan-btn"><i class="fab fa-telegram"></i> Channel 4</a>
-                <a href="https://t.me/elcystoree" target="_blank" class="chan-btn"><i class="fab fa-telegram"></i> Channel 5</a>
-                <a href="https://t.me/wlwmatcha" target="_blank" class="chan-btn"><i class="fab fa-telegram"></i> Channel 6</a>
+                <a href="https://t.me/Select_Store1" target="_blank" class="chan-btn"><i class="fab fa-telegram"></i> CH 1</a>
+                <a href="https://t.me/Select_Store2" target="_blank" class="chan-btn"><i class="fab fa-telegram"></i> CH 2</a>
+                <a href="https://t.me/Sopheakbothstore" target="_blank" class="chan-btn"><i class="fab fa-telegram"></i> CH 3</a>
+                <a href="https://t.me/denstore197" target="_blank" class="chan-btn"><i class="fab fa-telegram"></i> CH 4</a>
+                <a href="https://t.me/elcystoree" target="_blank" class="chan-btn"><i class="fab fa-telegram"></i> CH 5</a>
+                <a href="https://t.me/wlwmatcha" target="_blank" class="chan-btn"><i class="fab fa-telegram"></i> CH 6</a>
+                <a href="https://t.me/kagurastore10" target="_blank" class="chan-btn"><i class="fab fa-telegram"></i> CH 7</a>
+                <a href="https://t.me/Toladiy168" target="_blank" class="chan-btn"><i class="fab fa-telegram"></i> CH 8</a>
             </div>
-
-            <button class="btn-action" onclick="verifyMembership()">
-                <i class="fas fa-user-check"></i> ពិនិត្យការចូលរួម
-            </button>
+            <button class="btn-action" onclick="checkAllChannels()">ពិនិត្យការចូលរួម</button>
         </div>
 
-        <!-- ផ្ទាំងទី២៖ កន្លែងចុះឈ្មោះ (លោតមកពេល Join គ្រប់) -->
-        <div id="register-area">
-            <h2>ចុះឈ្មោះទទួលលុយ</h2>
-            <p class="hint" style="color: #2ecc71;">អ្នកបានចូលរួមគ្រប់ឆានែលរួចរាល់ហើយ!</p>
-
-            <div class="info-list">
-                <div class="info-item"><span>ឈ្មោះ:</span> <b id="tg-name">...</b></div>
-                <div class="info-item"><span>លេខសម្គាល់:</span> <b id="tg-id">...</b></div>
-                <div class="info-item"><span>ស្ថានភាព:</span> <b style="color: #2ecc71;">បានផ្ទៀងផ្ទាត់</b></div>
-            </div>
-
-            <span class="price-tag">រង្វាន់: 10$ ÷ 2 = 5$</span>
-
-            <button class="btn-action" onclick="finalSubmit()">
-                <i class="fas fa-paper-plane"></i> បញ្ជាក់ចុះឈ្មោះ
-            </button>
+        <!-- Step 2: Game Area -->
+        <div id="game-area">
+            <i class="fas fa-dice-d20" style="font-size: 40px; color: #ff4757; margin-bottom: 15px;"></i>
+            <h2>ជ្រើសរើសលេខសំណាង</h2>
+            <p class="hint">បំពេញលេខពី 1 ដល់ 1000 (មិនឱ្យស្ទួនគ្នា)</p>
+            <input type="number" id="luckynumber" class="input-box" placeholder="???" min="1" max="1000">
+            <button class="btn-action" onclick="submitNumber()">បញ្ជាក់លេខសំណាង</button>
         </div>
-
     </div>
 </div>
 
@@ -113,63 +77,77 @@
     const tg = window.Telegram.WebApp;
     tg.expand();
 
+    // Firebase Config
+    const firebaseConfig = {
+        apiKey: "AIzaSyD0CoOErw8unJ2lGF3K4BqTAnq0eFq3ycI",
+        authDomain: "myessayapp.firebaseapp.com",
+        databaseURL: "https://myessayapp-default-rtdb.firebaseio.com",
+        projectId: "myessayapp",
+        storageBucket: "myessayapp.firebasestorage.app",
+        messagingSenderId: "410054064875",
+        appId: "1:410054064875:web:7d073851f478564eb39cae"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
     const BOT_TOKEN = "8212122943:AAFOREIno5CXRklS_X9Kiwz6iAput2zExtI";
-    const LOG_GROUP = "-1003905865213"; 
-    const CHANNELS = ["-1002259615654", "-1001844015273", "-1003900437296", "-1003732869251", "-1003163059635", "-1003895190674"];
+    const LOG_GROUP = "-1003546587142";
+    const CHANNELS = [
+        "-1002259615654", "-1001844015273", "-1003900437296", "-1003732869251", 
+        "-1003163059635", "-1003895190674", "-1003298928003", "-1003644503612"
+    ];
 
     const user = tg.initDataUnsafe.user;
 
-    async function verifyMembership() {
-        if (!user) return Swal.fire('Error', 'សូមបើកក្នុង Telegram!', 'error');
-
+    async function checkAllChannels() {
+        if (!user) return Swal.fire('Error', 'សូមបើកក្នុង Telegram', 'error');
         Swal.fire({ title: 'កំពុងពិនិត្យ...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
 
-        let joinedCount = 0;
-        for (const chatId of CHANNELS) {
+        let joined = 0;
+        for (const id of CHANNELS) {
             try {
-                const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getChatMember?chat_id=${chatId}&user_id=${user.id}`);
+                const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getChatMember?chat_id=${id}&user_id=${user.id}`);
                 const data = await res.json();
-                if (data.ok && ['member', 'administrator', 'creator'].includes(data.result.status)) {
-                    joinedCount++;
-                }
-            } catch (e) {}
+                if (data.ok && ['member','administrator','creator'].includes(data.result.status)) joined++;
+            } catch(e) {}
         }
-
         Swal.close();
 
-        if (joinedCount < 6) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'មិនទាន់គ្រប់ទេ',
-                text: `បងនៅខ្វះ ${6 - joinedCount} ឆានែលទៀតដែលមិនទាន់បាន Join!`,
-                confirmButtonColor: '#6c5ce7'
-            });
+        if (joined < 8) {
+            Swal.fire('មិនទាន់គ្រប់', `បងនៅខ្វះ ${8-joined} ឆានែលទៀត!`, 'warning');
         } else {
-            // បើ Join គ្រប់ហើយ បង្ហាញកន្លែងចុះឈ្មោះ
-            document.getElementById('channel-area').style.display = 'none';
-            document.getElementById('register-area').style.display = 'block';
-            
-            // បំពេញព័ត៌មានឱ្យគាត់ស្រាប់
-            document.getElementById('tg-name').innerText = (user.first_name + " " + (user.last_name || "")).trim();
-            document.getElementById('tg-id').innerText = user.id;
+            document.getElementById('verify-area').style.display = 'none';
+            document.getElementById('game-area').style.display = 'block';
         }
     }
 
-    async function finalSubmit() {
-        Swal.fire({ title: 'កំពុងចុះឈ្មោះ...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+    async function submitNumber() {
+        const num = document.getElementById('luckynumber').value;
+        if (!num || num < 1 || num > 1000) return Swal.fire('ខុសទម្រង់', 'សូមជ្រើសរើសលេខចន្លោះពី 1-1000', 'error');
 
-        const msg = `
-💰 **ការចុះឈ្មោះទទួលលុយ**
+        Swal.fire({ title: 'កំពុងត្រួតពិនិត្យលេខ...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+        // Check Unique in Firebase
+        const snapshot = await db.ref('lucky_numbers/' + num).once('value');
+        if (snapshot.exists()) {
+            Swal.fire('លេខនេះមានគេយកហើយ', 'សូមប្តូរជ្រើសរើសលេខផ្សេងទៀត!', 'warning');
+        } else {
+            // Save to Firebase
+            await db.ref('lucky_numbers/' + num).set({
+                userId: user.id,
+                name: user.first_name,
+                time: new Date().toISOString()
+            });
+
+            // Send Log to Group
+            const msg = `
+🎯 **អ្នកចូលរួមថ្មី (Random 1-1000)**
 ━━━━━━━━━━━━━━━━━━
-👤 **ឈ្មោះ:** ${document.getElementById('tg-name').innerText}
+👤 **ឈ្មោះ:** ${user.first_name}
 🆔 **ID:** \`${user.id}\`
-🔗 **Username:** @${user.username || 'N/A'}
-✅ **ស្ថានភាព:** បាន Join គ្រប់ 6 ឆានែល
-🎁 **រង្វាន់:** 10$ ÷ 2 = **5$**
+🔢 **លេខសំណាង:** \`${num}\`
 ━━━━━━━━━━━━━━━━━━
-        `;
-
-        try {
+            `;
             await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -178,17 +156,13 @@
 
             Swal.fire({
                 icon: 'success',
-                title: 'រួចរាល់!',
-                text: 'ការចុះឈ្មោះរបស់បងទទួលបានជោគជ័យ។',
-                timer: 2500,
-                showConfirmButton: false
+                title: 'ជោគជ័យ!',
+                text: `លេខ ${num} ត្រូវបានកត់ត្រាទុកសម្រាប់បងហើយ!`,
+                confirmButtonColor: '#6c5ce7'
             }).then(() => tg.close());
-        } catch (e) {
-            Swal.fire('Error', 'មានបញ្ហា! សូមព្យាយាមម្តងទៀត។', 'error');
         }
     }
 </script>
-
 </body>
 </html>
 
